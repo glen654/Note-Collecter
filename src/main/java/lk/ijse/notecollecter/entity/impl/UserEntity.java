@@ -1,9 +1,6 @@
 package lk.ijse.notecollecter.entity.impl;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lk.ijse.notecollecter.dto.impl.NoteDTO;
 import lk.ijse.notecollecter.entity.SuperEntity;
 import lombok.AllArgsConstructor;
@@ -16,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "user")
 public class UserEntity implements SuperEntity {
     @Id
     private String userId;

@@ -1,5 +1,6 @@
 package lk.ijse.notecollecter.entity.impl;
 
+import jakarta.persistence.*;
 import lk.ijse.notecollecter.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,11 +9,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Entity
+@Table(name = "note")
 public class NoteEntity implements SuperEntity {
+    @Id
     private String noteId;
     private String noteTitle;
     private String noteDesc;
     private String createdDate;
     private String priorityLevel;
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private UserEntity user;
 }

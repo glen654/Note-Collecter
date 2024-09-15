@@ -2,6 +2,7 @@ package lk.ijse.notecollecter.controller;
 
 
 import lk.ijse.notecollecter.dto.impl.UserDTO;
+import lk.ijse.notecollecter.util.AppUtil;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,21 @@ public class UserController {
                             @RequestPart ("profilePic") String profilePic
 
     ){
-        //TODO:ProfilePic ------> Base64
+        //ProfilePic ------> Base64
+        String base64ProfilePic = AppUtil.profilePicToBase64(profilePic);
 
-        //TODO:User ID Generate
+        //User ID Generate
+        String userId = AppUtil.generateUserId();
+
         //TODO:Build The Object
+        var buildUserDto = new UserDTO();
+        buildUserDto.setUserId(userId);
+        buildUserDto.setFirstName(firstName);
+        buildUserDto.setLastName(lastName);
+        buildUserDto.setEmail(email);
+        buildUserDto.setPassword(password);
+        buildUserDto.setProfilePic(base64ProfilePic);
 
+        return buildUserDto;
     }
 }

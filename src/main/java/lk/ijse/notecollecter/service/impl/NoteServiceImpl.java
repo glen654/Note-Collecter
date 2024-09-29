@@ -1,6 +1,7 @@
-package lk.ijse.notecollecter.service;
+package lk.ijse.notecollecter.service.impl;
 
 import lk.ijse.notecollecter.dto.impl.NoteDTO;
+import lk.ijse.notecollecter.service.NoteService;
 import lk.ijse.notecollecter.util.AppUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 @Service
-public class NoteServiceImpl implements NoteService{
+public class NoteServiceImpl implements NoteService {
     private static List<NoteDTO> noteDTOList = new ArrayList<>();
 
     NoteServiceImpl(){

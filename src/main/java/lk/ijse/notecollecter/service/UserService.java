@@ -1,17 +1,18 @@
 package lk.ijse.notecollecter.service;
 
+import lk.ijse.notecollecter.dto.UserStatus;
 import lk.ijse.notecollecter.dto.impl.UserDTO;
 
 import java.util.List;
 
 public interface UserService {
-    UserDTO saveUser(UserDTO userDTO);
+    void saveUser(UserDTO userDTO);
 
     List<UserDTO> getAllUsers();
 
-    UserDTO getUser(String userId);
+    UserStatus getUser(String userId);
 
     void deleteUser(String userId);
 
-    boolean updateUser(String userId,UserDTO userTO);
+    void updateUser(String userId,UserDTO userDTO);
 }

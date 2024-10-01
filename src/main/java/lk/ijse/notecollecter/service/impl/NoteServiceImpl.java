@@ -1,56 +1,76 @@
 package lk.ijse.notecollecter.service.impl;
 
+import lk.ijse.notecollecter.customStatusCodes.SelectedUserAndNoteErrorStatus;
+import lk.ijse.notecollecter.dao.NoteDao;
+import lk.ijse.notecollecter.dao.UserDao;
+import lk.ijse.notecollecter.dto.NoteStatus;
 import lk.ijse.notecollecter.dto.impl.NoteDTO;
+import lk.ijse.notecollecter.entity.impl.NoteEntity;
+import lk.ijse.notecollecter.exception.DataPersistException;
+import lk.ijse.notecollecter.exception.NoteNotFoundException;
 import lk.ijse.notecollecter.service.NoteService;
 import lk.ijse.notecollecter.util.AppUtil;
+import lk.ijse.notecollecter.util.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
+@Transactional
 public class NoteServiceImpl implements NoteService {
-    private static List<NoteDTO> noteDTOList = new ArrayList<>();
-
-    NoteServiceImpl(){
-        noteDTOList.add(
-                new NoteDTO("NOTE-7146c4ab-c3cf-4ca6-bb2b-ae3371135362",
-                        "Python",
-                        "Python Test",
-                        "20240914",
-                        "P1",
-                        "1"));
-
-        noteDTOList.add(new NoteDTO("NOTE-7246c4ab-c3cf-4ca6-bb2b-ae3371135362",
-                "Js",
-                "Js Test",
-                "20240914",
-                "P1",
-                "2"));
-    }
+    @Autowired
+    private NoteDao noteDao;
+    @Autowired
+    private Mapping mapping;
     @Override
-    public NoteDTO saveNote(NoteDTO noteDTO) {
+    public void saveNote(NoteDTO noteDTO) {
         noteDTO.setNoteId(AppUtil.generateNoteId());
-        return noteDTO;
+        NoteEntity saveNote = noteDao.save(mapping.toNoteEntity(noteDTO));
+        if(saveNote == null){
+            throw new DataPersistException("Note not saved");
+        }
     }
 
     @Override
     public List<NoteDTO> getAllNotes() {
-        return noteDTOList;
+        return mapping.asNoteDTOList( noteDao.findAll());
     }
 
     @Override
-    public NoteDTO getNote(String noteId) {
-        return null;
+    public NoteStatus getNote(String noteId) {
+        if(noteDao.existsById(noteId)){
+            var selectedUser = noteDao.getReferenceById(noteId);
+            return mapping.toNoteDTO(selectedUser);
+        }else {
+            return new SelectedUserAndNoteErrorStatus(2,"Selected note not found");
+        }
     }
 
     @Override
-    public boolean deleteNote(String noteId) {
-        return false;
+    public void deleteNote(String noteId) {
+        Optional<NoteEntity> foundNote = noteDao.findById(noteId);
+        if (!foundNote.isPresent()) {
+            throw new NoteNotFoundException("Note not found");
+        }else {
+            noteDao.deleteById(noteId);
+        }
     }
 
     @Override
-    public boolean updateNote(String noteId,NoteDTO noteDTO) {
-        return false;
+    public void updateNote(String noteId,NoteDTO noteDTO) {
+        Optional<NoteEntity> tmpNote = noteDao.findById(noteId);
+        if(!tmpNote.isPresent()){
+            throw new NoteNotFoundException("Note not found");
+        }else{
+            tmpNote.get().setNoteTitle(noteDTO.getNoteTitle());
+            tmpNote.get().setNoteDesc(noteDTO.getNoteDesc());
+            tmpNote.get().setCreatedDate(noteDTO.getCreatedDate());
+            tmpNote.get().setPriorityLevel(noteDTO.getPriorityLevel());
+        }
     }
 }
